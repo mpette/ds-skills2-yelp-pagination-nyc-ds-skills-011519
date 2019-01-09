@@ -331,6 +331,13 @@ With that, you should have the basics to retrive the full result set!
 Use the example above to write a function to retrieve all of the results (up to the maximum 1000 provided by Yelp) for a given search. Your function should then return the results for these as a single Pandas dataframe.
 
 
+### Pseudocode outline: 
+
+The function should take in url paramaters in some form. From there, the first call should check the number of results and make successive API calls using the offset parameter to cycle through these results. Each response should be stored as a DataFrame which will then be stitched together.
+
+Warning: Making too many API calls can lead to errors. Most APIs require you to slow down your requests to a manageable limit. Make sure to use the time.sleep() method from the time package to make some brief pauses (~5 seconds is more then sufficient) between successive calls.
+
+
 ```python
 #Your code here
 def retrieve_results(term, location, api_key, offset=0):
@@ -364,27 +371,23 @@ def batch_retrieve(term, location, api_key):
     
     #Retrieve Total Matches
     total = response.json()['total']
-    results_count += len()
+    
     
     temp_df = pd.DataFrame.from_dict(response.json()['businesses'])
     dfs.append(temp_df)
+    results_count += len(temp_df)
     
     while results_count < total:
         response = retrieve_results(term, location, api_key, offset=results_count)
         temp_df = pd.DataFrame.from_dict(response.json()['businesses'])
         dfs.append(temp_df)
+        results_count += len(temp_df)
+
     
     df = pd.concat(dfs, ignore_index=True)
     
     return df
 ```
-
-
-### Pseudocode outline: 
-
-The function should take in url paramaters in some form. From there, the first call should check the number of results and make successive API calls using the offset parameter to cycle through these results. Each response should be stored as a DataFrame which will then be stitched together.
-
-Warning: Making too many API calls can lead to errors. Most APIs require you to slow down your requests to a manageable limit. Make sure to use the time.sleep() method from the time package to make some brief pauses (~5 seconds is more then sufficient) between successive calls.
 
 ## Neighborhood ______ Restaurants
 
